@@ -1,0 +1,54 @@
+import csv
+from collections import defaultdict
+from textblob import TextBlob
+
+columns = defaultdict(list) # each value in each column is appended to a list
+
+with open('C:\\Users\\vmetaniev\\OneDrive - DXC Production\\'
+          'NCE_SkillsDevelopment\\UseCase\\Hotel_ReviewsSa.csv') as f:
+    reader = csv.reader(f,delimiter=",") # read rows into a dictionary format
+
+    negRev = []
+    posRev = []
+    hotNam = []
+
+    for row in reader:
+        negativeReviews = row[8]
+        positiveReviews = row[11]
+        hotelName = row[6]
+        negRev.append(negativeReviews)
+        posRev.append(positiveReviews)
+        hotNam.append(hotelName)
+
+csvFile = open('PositiveReviewSA.csv', 'w', newline='')
+with csvFile as cv:
+    fieldNames = ['Hotel_Name','Positive_Review','Polarity','Subjectivity']
+
+    writer = csv.DictWriter(cv, fieldNames)
+
+    writer.writeheader()
+    i = 0
+    for i in range(0, len(posRev)):
+        pos1 = posRev[i]
+        pol1 = TextBlob(posRev[i]).sentiment[0]
+        sub1 = TextBlob(posRev[i]).sentiment[1]
+        writer.writerow({fieldNames[0]: hotNam[i], fieldNames[1]: pos1, fieldNames[2]: pol1,
+                         fieldNames[3]: sub1})
+
+csvFile2 = open('NegativeReviewSA.csv','w', newline='')
+with csvFile2 as cv2:
+    fieldNames = ['Hotel_Name','Negative_Review','Polarity','Subjectivity']
+
+    writer = csv.DictWriter(cv2, fieldNames)
+
+    writer.writeheader()
+    i = 0
+    for i in range(0, len(posRev)):
+        neg1 = negRev[i]
+        pol1 = TextBlob(negRev[i]).sentiment[0]
+        sub1 = TextBlob(negRev[i]).sentiment[1]
+        writer.writerow({fieldNames[0]:hotNam[i],fieldNames[1]:neg1,fieldNames[2]:pol1,
+                         fieldNames[3]:sub1})
+
+
+print("Success!")
